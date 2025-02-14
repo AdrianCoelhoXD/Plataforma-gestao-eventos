@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./db/conexao');
 
+require("dotenv").config();
 dotenv.config(); 
 
 const app = express();
