@@ -28,6 +28,9 @@ app.use('/graphql', createHandler({
     graphiql: true, // Ativar o GraphiQL para testes
   }));
 
+const authRoutes = require('./routes/eventRoutes');
+app.use('/api', authRoutes); // Isso fará com que a rota seja /api/register
+
 // Rotas 
 app.get('/',(req,res)=> {
     res.send('API GESTÃO DE EVENTOS');

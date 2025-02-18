@@ -12,17 +12,25 @@ const getEvents = async (req, res)=> {
 
 const createEvent = async (req, res) => {
     const { title, description, date, location, online, maxParticipants } = req.body;
-    const organizer = req.userId;}
-    try{
-        const event = new event ({
-            tittle, description, date, location, online, maxParticipants, organizer
+    const organizer = req.userId;  // Certifique-se de que o userId está sendo atribuído corretamente
+
+    try {
+        // Criação do evento
+        const event = new Event({
+            title, description, date, location, online, maxParticipants, organizer
         });
+
+        // Salvando o evento no banco de dados
         await event.save();
+
+        // Retorno de sucesso
         res.status(201).json(event);
-    } catch (error) { 
-    res.status(400).json({message: 'Error ao criar o evento', error})
-    } 
-    
+    } catch (error) {
+        // Caso ocorra um erro
+        res.status(400).json({ message: 'Erro ao criar o evento', error });
+    }
+};
+
 const deleteEvent = async (req, res) => {
     const { id } = req.params;
 

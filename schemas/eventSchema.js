@@ -8,9 +8,9 @@ const schema = buildSchema(`
         role: String!
     }
 
-    type Event {  # Aqui estava "event", agora está com "E" maiúsculo
+    type Event {  
         id: ID!
-        title: String!  # Corrigido "tittle" para "title"
+        title: String!
         description: String!
         date: String!
         location: String!
@@ -27,7 +27,7 @@ const schema = buildSchema(`
 
     type Mutation {
         createEvent(
-            title: String!  # Corrigido "tittle" para "title"
+            title: String! 
             description: String!
             date: String!
             location: String!
