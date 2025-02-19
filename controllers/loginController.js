@@ -36,8 +36,11 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
+    }        
+    // Verifica se a conta está ativa
+    if (!user.isActive) {
+      return res.status(400).json({ success: false, message: 'Conta desativada' });
     }
-
     // Compara a senha fornecida com a senha armazenada
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
@@ -55,4 +58,27 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login };
+
+//OBS: Só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email. Por questões de segurança. 
+
+const deactivateAccount = async (req, res, next) => {
+  const userId = req.user.id; // ID do usuário autenticado
+
+  try {
+    // Verifica se o usuário existe
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    }
+
+    // Desativa a conta
+    user.isActive = false;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Conta desativada com sucesso' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, login, deactivateAccount };
