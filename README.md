@@ -33,7 +33,7 @@ Acesse o diretório do projeto:
 Instale as dependências:
 
   npm install
-
+  
 Configure as variáveis de ambiente no arquivo .env
 
 Executando o Projeto
@@ -43,3 +43,4 @@ Para iniciar o servidor em modo de desenvolvimento:
   npm run dev
 
 Para iniciar o servidor em produção:
+  npm start
