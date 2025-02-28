@@ -32,7 +32,7 @@ app.get('/',(req,res)=> {
 // Middleware global de erros (DEVE SER O ÚLTIMO MIDDLEWARE)
 app.use(globalErrorHandler);
 
-// Iniciar sevidor 
+// Inicia sevidor 
 app.listen(PORT, ()=> {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
