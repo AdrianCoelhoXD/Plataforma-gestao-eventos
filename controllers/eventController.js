@@ -1,89 +1,81 @@
 const Event = require("../models/events");
 
-const getEvents = async (req, res)=> {
-    try	{
-        const events = await Event.find({isDeleted: false}).populate('organizer participants');
-        res.status(200).json(events);
-    }
-    catch (error){
-        res.status(500).json({message: 'Error ao buscar eventos', error});
-    }
-};
 
-const createEvent = async (req, res) => {
+const getEvents = async (req, res, next) => {
+    const events = await Event.find({ isDeleted: false }).populate('organizer participants');
+    if (!events) {
+      const error = new Error('Nenhum evento encontrado');
+      error.statusCode = 404; 
+      throw error; // Lança o erro para o middleware 
+    }
+    res.status(200).json(events);
+  };
+
+  const createEvent = async (req, res, next) => {
     const { title, description, date, location, online, maxParticipants } = req.body;
-    const organizer = req.userId;  // Certifique-se de que o userId está sendo atribuído corretamente
+    const organizer = req.userId;
+  
+    const event = new Event({
+      title, description, date, location, online, maxParticipants, organizer
+    });
+  
+    await event.save();
+    res.status(201).json(event);
+  };
 
-    try {
-        // Criação do evento
-        const event = new Event({
-            title, description, date, location, online, maxParticipants, organizer
-        });
-
-        // Salvando o evento no banco de dados
-        await event.save();
-
-        // Retorno de sucesso
-        res.status(201).json(event);
-    } catch (error) {
-        // Caso ocorra um erro
-        res.status(400).json({ message: 'Erro ao criar o evento', error });
-    }
-};
-
-const deleteEvent = async (req, res) => {
-    const { id } = req.params;
-
-    try{
-        const event = await Event.findOneAndUpdate(
-            { _id: id, organizer: req.userId},
-            { isDeleted: true},
-            { new: true}
-        );
-    if (!event){
-        return res.status(404).json({message: 'Evento não encontrado ou você não tem permissão para excluí-lo'}); }
-        res.status(200).json({message: 'Evento excluído com sucesso'});
-    } catch (error) {
-        res.status(500).json({message: 'Error ao excluir evento', error});
-    };
-}
-
-const updateEvent = async (req, res)=> {
-    const { id } = req.params;
-
-    try{
-        const event = await Event.findOneAndUpdate(
-            { _id: id, organizer: req.userId, isDeleted: false}, updates, { new: true }
-        );
-    
-    if (!event){
-        return res.status(404).json({message: 'Evento não encontrado ou você não tem permissão para editá-lo'}); }
-        res.status(200).json(event);
-    }
-    catch (error){
-        res.status(400).json({message: 'Error ao atualizar evento', error});
-    }
-    
-}
-
-const restoreEvent = async (req, res) => {
+const deleteEvent = async (req, res, next) => {
     const { id } = req.params;
   
-    try {
-      const event = await Event.findOneAndUpdate(
-        { _id: id, organizer: req.user.id, isDeleted: true }, 
-        { isDeleted: false },
-        { new: true }
-      );
+    const event = await Event.findOneAndUpdate(
+      { _id: id, organizer: req.userId },
+      { isDeleted: true },
+      { new: true }
+    );
   
-      if (!event) {
-        return res.status(404).json({ message: 'Evento não encontrado ou você não tem permissão para restaurá-lo' });
-      }
-  
-      res.status(200).json({ message: 'Evento restaurado com sucesso', event });
-    } catch (error) {
-      res.status(400).json({ message: 'Erro ao restaurar o evento', error });
+    if (!event) {
+      const error = new Error('Evento não encontrado ou você não tem permissão para excluí-lo');
+      error.statusCode = 404;
+      throw error;
     }
+  
+    res.status(200).json({ message: 'Evento excluído com sucesso' });
+  };
+
+const updateEvent = async (req, res, next) => {
+    const { id } = req.params;
+    const updates = req.body;
+  
+    const event = await Event.findOneAndUpdate(
+      { _id: id, organizer: req.userId, isDeleted: false },
+      updates,
+      { new: true }
+    );
+  
+    if (!event) {
+      const error = new Error('Evento não encontrado ou você não tem permissão para editá-lo');
+      error.statusCode = 404;
+      throw error;
+    }
+  
+    res.status(200).json(event);
+  };
+  
+  const restoreEvent = async (req, res, next) => {
+    const { id } = req.params;
+  
+    const event = await Event.findOneAndUpdate(
+      { _id: id, organizer: req.user.id, isDeleted: true },
+      { isDeleted: false },
+      { new: true }
+    );
+  
+    if (!event) {
+      const error = new Error('Evento não encontrado ou você não tem permissão para restaurá-lo');
+      error.statusCode = 404;
+      throw error;
+    }
+  
+    res.status(200).json({ message: 'Evento restaurado com sucesso', event });
   };
   
 module.exports = { createEvent, getEvents, updateEvent, deleteEvent, restoreEvent };
