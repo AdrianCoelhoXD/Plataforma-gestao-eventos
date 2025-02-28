@@ -21,18 +21,19 @@ app.use(express.json());
 // Conectando ao MongoDB
 connectDB();
 
-// Configurar o GraphQL endpoint
+/* Configurar o GraphQL endpoint
 app.use('/graphql', createHandler({
     schema,
     rootValue: resolvers,
     graphiql: true, // Ativar o GraphiQL para testes
   }));
+*/
 
 const authRoutes = require('./routes/authRoutes');
-app.use('/api', authRoutes); // Isso fará com que a rota seja /api/register
+app.use('/api', authRoutes); // Rota Registro - /api/register
 
 const eventRoutes = require('./routes/eventRoutes');
-app.use('/api/events', eventRoutes); // Isso fará com que a rota seja /api/events
+app.use('/api/events', eventRoutes); //  Rota event - /api/events
 
 // Rotas 
 app.get('/',(req,res)=> {
