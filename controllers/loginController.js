@@ -59,6 +59,44 @@ const login = async (req, res, next) => {
 };
 
 
+// const login = async (req, res, next) => {
+//   const { email, password } = req.body;
+//   console.log('Tentativa de login com:', email); // Log 1
+
+//   try {
+//     const user = await User.findOne({ email });
+//     console.log('Usuário encontrado:', user); // Log 2
+
+//     if (!user) {
+//       console.log('Usuário não encontrado'); // Log 3
+//       return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
+//     }
+
+//     if (!user.isActive) {
+//       console.log('Conta desativada'); // Log 4
+//       return res.status(400).json({ success: false, message: 'Conta desativada' });
+//     }
+
+//     const isMatch = await user.comparePassword(password);
+//     console.log('Senha válida?', isMatch); // Log 5
+
+//     if (!isMatch) {
+//       console.log('Senha inválida'); // Log 6
+//       return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
+//     }
+
+//     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+//       expiresIn: '1h',
+//     });
+//     console.log('Token gerado:', token); // Log 7
+
+//     res.status(200).json({ success: true, token });
+//   } catch (error) {
+//     console.error('Erro no login:', error); // Log 8
+//     next(error);
+//   }
+// };
+
 //OBS: Só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email. Por questões de segurança. 
 
 const deactivateAccount = async (req, res, next) => {
