@@ -63,26 +63,59 @@ const login = async (req, res, next) => {
   }
 };
 
-//OBS: Só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email. Por questões de segurança. 
-
+//OBS: Só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email (Futuramente) Por questões de segurança. 
+// Funcionando
 const deactivateAccount = async (req, res, next) => {
   const userId = req.user.id; // ID do usuário autenticado
 
   try {
+    console.log('Tentando desativar conta do usuário com ID:', userId);
+
     // Verifica se o usuário existe
     const user = await User.findById(userId);
     if (!user) {
+      console.log('Usuário não encontrado:', userId);
       return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
     }
+
+    console.log('Usuário encontrado:', user.email);
 
     // Desativa a conta
     user.isActive = false;
     await user.save();
 
+    console.log('Conta desativada com sucesso para o usuário:', user.email);
     res.status(200).json({ success: true, message: 'Conta desativada com sucesso' });
   } catch (error) {
+    console.error('Erro ao desativar conta:', error.message);
     next(error);
   }
 };
 
-module.exports = { register, login, deactivateAccount };
+const deleteUserPermanently = async (req, res, next) => {
+  const userId = req.params.id; // ID do usuário a ser excluído
+
+  try {
+    console.log('Tentando excluir permanentemente o usuário com ID:', userId);
+
+    // Verifica se o usuário existe
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log('Usuário não encontrado:', userId);
+      return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    }
+
+    console.log('Usuário encontrado:', user.email);
+
+    // Exclui o usuário permanentemente
+    await User.findByIdAndDelete(userId);
+
+    console.log('Usuário excluído permanentemente:', user.email);
+    res.status(200).json({ success: true, message: 'Usuário excluído permanentemente com sucesso' });
+  } catch (error) {
+    console.error('Erro ao excluir usuário permanentemente:', error.message);
+    next(error);
+  }
+};
+
+module.exports = { register, login, deactivateAccount ,deleteUserPermanently};

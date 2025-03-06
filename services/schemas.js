@@ -167,3 +167,20 @@
  *         email: joao@example.com
  *         password: senha123
  */
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     DeactivateAccountResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *           description: Indica se a operação foi bem-sucedida.
+ *         message:
+ *           type: string
+ *           example: "Conta desativada com sucesso"
+ *           description: Mensagem de sucesso ou erro.
+ */
