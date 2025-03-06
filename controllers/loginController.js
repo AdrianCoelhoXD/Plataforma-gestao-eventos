@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
-// Registrar um novo usuário
+// Registrar um novo usuário // Funcionando
 const register = async (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -27,75 +27,41 @@ const register = async (req, res, next) => {
   }
 };
 
-// Login de usuário
+// Funcionando
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    // Verifica se o usuário existe
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
-    }        
-    // Verifica se a conta está ativa
-    if (!user.isActive) {
-      return res.status(400).json({ success: false, message: 'Conta desativada' });
-    }
-    // Compara a senha fornecida com a senha armazenada
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
-    }
+      console.log('Tentando fazer login com e-mail:', email);
 
-    // Gera um token JWT
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '1h' // Token expira em 1 hora
-    });
+      const user = await User.findOne({ email });
+      if (!user) {
+          console.log('Usuário não encontrado:', email);
+          return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
+      }
 
-    res.status(200).json({ success: true, token });
+      if (!user.isActive) {
+          console.log('Conta desativada:', email);
+          return res.status(400).json({ success: false, message: 'Conta desativada' });
+      }
+
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+          console.log('Senha inválida para o usuário:', email);
+          return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
+      }
+
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+          expiresIn: '1h'
+      });
+
+      console.log('Login realizado com sucesso para o usuário:', email);
+      res.status(200).json({ success: true, token });
   } catch (error) {
-    next(error);
+      console.error('Erro ao fazer login:', error.message);
+      next(error);
   }
 };
-
-
-// const login = async (req, res, next) => {
-//   const { email, password } = req.body;
-//   console.log('Tentativa de login com:', email); // Log 1
-
-//   try {
-//     const user = await User.findOne({ email });
-//     console.log('Usuário encontrado:', user); // Log 2
-
-//     if (!user) {
-//       console.log('Usuário não encontrado'); // Log 3
-//       return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
-//     }
-
-//     if (!user.isActive) {
-//       console.log('Conta desativada'); // Log 4
-//       return res.status(400).json({ success: false, message: 'Conta desativada' });
-//     }
-
-//     const isMatch = await user.comparePassword(password);
-//     console.log('Senha válida?', isMatch); // Log 5
-
-//     if (!isMatch) {
-//       console.log('Senha inválida'); // Log 6
-//       return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
-//     }
-
-//     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-//       expiresIn: '1h',
-//     });
-//     console.log('Token gerado:', token); // Log 7
-
-//     res.status(200).json({ success: true, token });
-//   } catch (error) {
-//     console.error('Erro no login:', error); // Log 8
-//     next(error);
-//   }
-// };
 
 //OBS: Só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email. Por questões de segurança. 
 

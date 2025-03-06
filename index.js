@@ -4,8 +4,11 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./db/conexao');
 const globalErrorHandler = require('./middlewares/globalErrorMiddleware'); 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const specs = require('./services/swagger');
 
-require("dotenv").config();
+
 dotenv.config(); 
 
 const app = express();
@@ -14,6 +17,9 @@ const PORT = process.env.PORT || 3000;
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Middleware do Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Conectando ao MongoDB
 connectDB();
