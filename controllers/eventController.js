@@ -98,7 +98,7 @@ const Event = require("../models/events");
       console.log('ID do organizador (usuário autenticado):', req.userId);
       console.log('Dados de atualização recebidos:', req.body);
   
-      const { id } = req.params;
+      const { id } = req.userId;
       const updates = req.body;
   
       const event = await Event.findOneAndUpdate(
