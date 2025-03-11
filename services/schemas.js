@@ -11,10 +11,6 @@
  *         - location
  *         - maxParticipants
  *       properties:
- *         id:
- *           type: string
- *           example: 507f1f77bcf86cd799439012
- *           description: ID único do evento
  *         title:
  *           type: string
  *           example: Conferência de Tecnologia
@@ -26,7 +22,7 @@
  *         date:
  *           type: string
  *           format: date-time
- *           example: 2024-12-31T23:59:59Z
+ *           example: 2025-12-31T23:59:59Z
  *           description: Data e hora do evento
  *         location:
  *           type: string
@@ -47,20 +43,14 @@
  *             type: string
  *             example: 507f1f77bcf86cd799439011
  *           description: Lista de IDs dos participantes
- *         organizer:
- *           type: string
- *           example: 507f1f77bcf86cd799439011
- *           description: ID do organizador do evento
  *       example:
- *         id: 507f1f77bcf86cd799439012
  *         title: Conferência de Tecnologia
  *         description: Um evento sobre as últimas tendências em tecnologia.
- *         date: 2024-12-31T23:59:59Z
+ *         date: 2025-12-31T23:59:59Z
  *         location: São Paulo, Brasil
  *         online: false
  *         maxParticipants: 100
  *         participants: []
- *         organizer: 507f1f77bcf86cd799439011
  */
 
 /**

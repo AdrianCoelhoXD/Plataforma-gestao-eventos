@@ -1,5 +1,5 @@
 const express = require('express');
-const { createEvent, getEvents, updateEvent, deleteEvent, restoreEvent } = require('../controllers/eventController');
+const { createEvent, getEvents, updateEvent, deleteEvent } = require('../controllers/eventController');
 const authMiddleware = require('../middlewares/authMiddleware'); 
 const validate = require('../middlewares/validationMiddleware');
 const { eventValidationRules } = require('../utils/validators');
@@ -32,9 +32,8 @@ const router = express.Router();
  *       401:
  *         description: Não autorizado
  */
-router.post('/', createEvent);
+router.post('/', authMiddleware, eventValidationRules(), validate, createEvent);
 
-// authMiddleware, eventValidationRules, validate,
 /**
  * @openapi
  * /api/events:

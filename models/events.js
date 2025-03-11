@@ -8,7 +8,7 @@ const eventSchema = new mongoose.Schema({
     online: { type: Boolean, default: false },
     maxParticipants: { type: Number, required: true },
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-})
+    organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } 
+});
 
 module.exports = mongoose.model('Event', eventSchema);

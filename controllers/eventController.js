@@ -1,15 +1,6 @@
 const Event = require("../models/events");
 
 
-// const getEvents = async (req, res, next) => {
-//     const events = await Event.find({ isDeleted: false }).populate('organizer participants');
-//     if (!events) {
-//       const error = new Error('Nenhum evento encontrado');
-//       error.statusCode = 404; 
-//       throw error; // Lança o erro para o middleware 
-//     }
-//     res.status(200).json(events);
-//   };
   const getEvents = async (req, res, next) => {
     try {
       console.log('Requisição recebida para listar eventos');
@@ -28,25 +19,14 @@ const Event = require("../models/events");
       next(error);
     }
   };
-  // const createEvent = async (req, res, next) => {
-  //   const { title, description, date, location, online, maxParticipants } = req.body;
-  //   const organizer = req.userId;
-  
-  //   const event = new Event({
-  //     title, description, date, location, online, maxParticipants, organizer
-  //   });
-  
-  //   await event.save();
-  //   res.status(201).json(event);
-  // };
-
+ 
   const createEvent = async (req, res, next) => {
     try {
       console.log('Requisição recebida para criar um evento');
       console.log('Corpo da requisição:', req.body);
   
       const { title, description, date, location, online, maxParticipants } = req.body;
-      const organizer = req.userId; // Extrai o ID do usuário autenticado do token JWT
+      const organizer = req.userId; 
   
       console.log('Dados extraídos do corpo da requisição:', {
         title,
@@ -58,7 +38,6 @@ const Event = require("../models/events");
         organizer
       });
   
-      // Cria o evento
       const event = new Event({
         title,
         description,
@@ -68,7 +47,9 @@ const Event = require("../models/events");
         maxParticipants,
         organizer 
       });
-        
+  
+      console.log('Evento criado (ainda não salvo):', event);
+      
       // Salva o evento no banco de dados
       await event.save();
       console.log('Evento salvo com sucesso:', event);
@@ -81,23 +62,6 @@ const Event = require("../models/events");
     }
   };
 
-    // const deleteEvent = async (req, res, next) => {
-    //     const { id } = req.params;
-      
-    //     const event = await Event.findOneAndUpdate(
-    //       { _id: id, organizer: req.userId },
-    //       { isDeleted: true },
-    //       { new: true }
-    //     );
-      
-    //     if (!event) {
-    //       const error = new Error('Evento não encontrado ou você não tem permissão para excluí-lo');
-    //       error.statusCode = 404;
-    //       throw error;
-    //     }
-      
-    //     res.status(200).json({ message: 'Evento excluído com sucesso' });
-    //   };
   const deleteEvent = async (req, res, next) => {
     try {
       console.log('Requisição recebida para excluir um evento');
@@ -126,24 +90,7 @@ const Event = require("../models/events");
     }
   };
 
-// const updateEvent = async (req, res, next) => {
-//     const { id } = req.params;
-//     const updates = req.body;
-  
-//     const event = await Event.findOneAndUpdate(
-//       { _id: id, organizer: req.userId, isDeleted: false },
-//       updates,
-//       { new: true }
-//     );
-  
-//     if (!event) {
-//       const error = new Error('Evento não encontrado ou você não tem permissão para editá-lo');
-//       error.statusCode = 404;
-//       throw error;
-//     }
-  
-//     res.status(200).json(event);
-//   };
+
   const updateEvent = async (req, res, next) => {
     try {
       console.log('Requisição recebida para atualizar um evento');
