@@ -90,7 +90,7 @@ const Event = require("../models/events");
     }
   };
 
-
+// Não está encontrando ID
   const updateEvent = async (req, res, next) => {
     try {
       console.log('Requisição recebida para atualizar um evento');

@@ -10,8 +10,8 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.userId; // Extrai o userId do payload
-    req.role = decoded.role; // Extrai o role do payload (se necessário)
-    console.log('Usuário autenticado. userId:', req.userId); // Log para depuração
+    req.role = decoded.role; // Extrai o role do payload 
+    console.log('Usuário autenticado. userId:', req.userId); 
     next();
   } catch (error) {
     res.status(400).json({ message: 'Token inválido.' });

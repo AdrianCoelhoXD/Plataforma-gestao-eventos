@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
-// Registrar um novo usuário // Funcionando
 const register = async (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -18,7 +17,7 @@ const register = async (req, res, next) => {
 
     // Gera um token JWT
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '1h' // Token expira em 1 hora
+      expiresIn: '1h' 
     });
 
     res.status(201).json({ success: true, token });
@@ -27,7 +26,6 @@ const register = async (req, res, next) => {
   }
 };
 
-// Funcionando
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -63,10 +61,9 @@ const login = async (req, res, next) => {
   }
 };
 
-//OBS: Só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email (Futuramente) Por questões de segurança. 
-// Funcionando
+//OBS: Não foi implementado função de reativação de conta, só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email (Futuramente) Por questões de segurança. 
 const deactivateAccount = async (req, res, next) => {
-  const userId = req.user.id; // ID do usuário autenticado
+  const userId = req.userId; // Usa req.userId, que é definido pelo authMiddleware
 
   try {
     console.log('Tentando desativar conta do usuário com ID:', userId);
@@ -97,8 +94,6 @@ const deleteUserPermanently = async (req, res, next) => {
 
   try {
     console.log('Tentando excluir permanentemente o usuário com ID:', userId);
-
-    // Verifica se o usuário existe
     const user = await User.findById(userId);
     if (!user) {
       console.log('Usuário não encontrado:', userId);

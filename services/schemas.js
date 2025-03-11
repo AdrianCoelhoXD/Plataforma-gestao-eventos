@@ -1,3 +1,5 @@
+// services/schemas.js
+
 /**
  * @openapi
  * components:
@@ -13,8 +15,8 @@
  *       properties:
  *         title:
  *           type: string
- *           example: Conferência de Tecnologia
- *           description: Título do evento
+ *           example: Evento de Tecnologia
+ *           description: Mulher Tech
  *         description:
  *           type: string
  *           example: Um evento sobre as últimas tendências em tecnologia.
@@ -26,7 +28,7 @@
  *           description: Data e hora do evento
  *         location:
  *           type: string
- *           example: São Paulo, Brasil
+ *           example: Paraiba, Brasil
  *           description: Local do evento
  *         online:
  *           type: boolean
@@ -173,4 +175,249 @@
  *           type: string
  *           example: "Conta desativada com sucesso"
  *           description: Mensagem de sucesso ou erro.
+ */
+
+/**
+ * @openapi
+ * /api/register:
+ *   post:
+ *     summary: Registra um novo usuário
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserRegister'
+ *     responses:
+ *       201:
+ *         description: Usuário registrado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Dados inválidos
+ */
+
+/**
+ * @openapi
+ * /api/login:
+ *   post:
+ *     summary: Autentica um usuário
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserLogin'
+ *     responses:
+ *       200:
+ *         description: Usuário autenticado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Dados inválidos
+ *       401:
+ *         description: Credenciais inválidas
+ */
+
+/**
+ * @openapi
+ * /api/deactivate:
+ *   post:
+ *     summary: Desativa a conta do usuário
+ *     description: Desativa a conta do usuário autenticado. Requer um token JWT válido.
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Conta desativada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DeactivateAccountResponse'
+ *       401:
+ *         description: Não autorizado (token ausente ou inválido)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Acesso negado. Token não fornecido."
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário não encontrado"
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erro ao desativar conta"
+ */
+
+/**
+ * @openapi
+ * /api/users/{id}:
+ *   delete:
+ *     summary: Exclui permanentemente um usuário
+ *     description: Exclui permanentemente um usuário do banco de dados. Requer autenticação.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do usuário a ser excluído
+ *     responses:
+ *       200:
+ *         description: Usuário excluído permanentemente com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário excluído permanentemente com sucesso"
+ *       401:
+ *         description: Não autorizado (token ausente ou inválido)
+ *       404:
+ *         description: Usuário não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+
+/**
+ * @openapi
+ * /api/events:
+ *   post:
+ *     summary: Cria um novo evento
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Event'
+ *     responses:
+ *       201:
+ *         description: Evento criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Dados inválidos
+ *       401:
+ *         description: Não autorizado
+ */
+
+/**
+ * @openapi
+ * /api/events:
+ *   get:
+ *     summary: Retorna todos os eventos
+ *     tags: [Events]
+ *     responses:
+ *       200:
+ *         description: Lista de eventos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Event'
+ */
+
+/**
+ * @openapi
+ * /api/events/{id}:
+ *   put:
+ *     summary: Atualiza um evento existente
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do evento
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Event'
+ *     responses:
+ *       200:
+ *         description: Evento atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Dados inválidos
+ *       401:
+ *         description: Não autorizado
+ *       404:
+ *         description: Evento não encontrado
+ */
+
+/**
+ * @openapi
+ * /api/events/{id}:
+ *   delete:
+ *     summary: Exclui um evento
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do evento
+ *     responses:
+ *       204:
+ *         description: Evento excluído com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       404:
+ *         description: Evento não encontrado
  */
