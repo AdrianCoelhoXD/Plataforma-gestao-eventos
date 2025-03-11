@@ -151,6 +151,6 @@ router.post('/deactivate', authMiddleware, deactivateAccount);
  *       500:
  *         description: Erro interno do servidor
  */
-router.delete('/users/:id', authMiddleware, deleteUserPermanently);
+router.delete('/users/:id', deleteUserPermanently);
 
 module.exports = router;

@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * /events:
+ * /api/events:
  *   post:
  *     summary: Cria um novo evento
  *     tags: [Events]
@@ -32,11 +32,12 @@ const router = express.Router();
  *       401:
  *         description: Não autorizado
  */
-router.post('/', authMiddleware, eventValidationRules, validate, createEvent);
+router.post('/', createEvent);
 
+// authMiddleware, eventValidationRules, validate,
 /**
  * @openapi
- * /events:
+ * /api/events:
  *   get:
  *     summary: Retorna todos os eventos
  *     tags: [Events]
@@ -54,7 +55,7 @@ router.get('/', getEvents);
 
 /**
  * @openapi
- * /events/{id}:
+ * /api/events/{id}:
  *   put:
  *     summary: Atualiza um evento existente
  *     tags: [Events]
@@ -91,7 +92,7 @@ router.put('/:id', authMiddleware, eventValidationRules(), validate, updateEvent
 
 /**
  * @openapi
- * /events/{id}:
+ * /api/events/{id}:
  *   delete:
  *     summary: Exclui um evento
  *     tags: [Events]
@@ -112,35 +113,6 @@ router.put('/:id', authMiddleware, eventValidationRules(), validate, updateEvent
  *       404:
  *         description: Evento não encontrado
  */
-router.delete('/:id', authMiddleware, deleteEvent);
-
-/**
- * @openapi
- * /events/{id}/restore:
- *   post:
- *     summary: Restaura um evento excluído
- *     tags: [Events]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID do evento
- *     responses:
- *       200:
- *         description: Evento restaurado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Event'
- *       401:
- *         description: Não autorizado
- *       404:
- *         description: Evento não encontrado
- */
-router.post('/:id/restore', authMiddleware, restoreEvent);
+router.delete('/:id', deleteEvent);
 
 module.exports = router;
