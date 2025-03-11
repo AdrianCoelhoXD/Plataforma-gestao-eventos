@@ -25,10 +25,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 connectDB();
 
 const authRoutes = require('./routes/authRoutes');
-app.use('/api', authRoutes); // Rota Registro - /api/register
+app.use('/api', authRoutes); // Rota Registro 
 
 const eventRoutes = require('./routes/eventRoutes');
-app.use('/api/events', eventRoutes); //  Rota event - /api/events
+app.use('/api/events', eventRoutes); //  Rota evento
 
 // Rotas 
 app.get('/',(req,res)=> {
