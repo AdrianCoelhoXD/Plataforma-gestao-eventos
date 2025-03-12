@@ -50,11 +50,9 @@ const Event = require("../models/events");
   
       console.log('Evento criado (ainda não salvo):', event);
       
-      // Salva o evento no banco de dados
       await event.save();
       console.log('Evento salvo com sucesso:', event);
   
-      // Retorna o evento criado
       res.status(201).json(event);
     } catch (error) {
       console.error('Erro ao criar evento:', error.message);
@@ -97,7 +95,7 @@ const Event = require("../models/events");
       console.log('ID do organizador (usuário autenticado):', req.userId);
       console.log('Dados de atualização recebidos:', req.body);
   
-      const id = req.params.id; // Usa o ID da URL, não de req.userId
+      const id = req.params.id; // Usa o ID da URL
       const updates = req.body;
   
       const event = await Event.findOneAndUpdate(
@@ -121,37 +119,5 @@ const Event = require("../models/events");
     }
   };
 
-
-// Não está encontrando ID
-  // const updateEvent = async (req, res, next) => {
-  //   try {
-  //     console.log('Requisição recebida para atualizar um evento');
-  //     console.log('ID do evento:', req.params.id);
-  //     console.log('ID do organizador (usuário autenticado):', req.userId);
-  //     console.log('Dados de atualização recebidos:', req.body);
-  
-  //     const { id } = req.userId;
-  //     const updates = req.body;
-  
-  //     const event = await Event.findOneAndUpdate(
-  //       { _id: id, organizer: req.userId, isDeleted: false },
-  //       updates,
-  //       { new: true }
-  //     );
-      
-  //     if (!event) {
-  //       console.error('Evento não encontrado ou usuário não tem permissão para editá-lo');
-  //       const error = new Error('Evento não encontrado ou você não tem permissão para editá-lo');
-  //       error.statusCode = 404;
-  //       throw error;
-  //     }
-      
-  //     console.log('Evento atualizado com sucesso:', event);
-  //     res.status(200).json(event);
-  //   } catch (error) {
-  //     console.error('Erro ao atualizar evento:', error.message);
-  //     next(error);
-  //   }
-  // };
   
 module.exports = { createEvent, getEvents, updateEvent, deleteEvent };
