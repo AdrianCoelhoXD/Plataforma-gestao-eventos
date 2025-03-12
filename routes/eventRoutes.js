@@ -10,8 +10,8 @@ router.post('/', authMiddleware, eventValidationRules(), validate, createEvent);
 
 router.get('/', getEvents);
 
-router.put('/:id', authMiddleware, eventValidationRules(), validate, updateEvent);
-
+router.put('/:id', authMiddleware, validate, updateEvent);
+//eventValidationRules()
 router.delete('/:id', authMiddleware, deleteEvent); 
 
 module.exports = router;

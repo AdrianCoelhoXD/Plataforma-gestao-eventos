@@ -10,7 +10,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000', // Altere para sua URL
+        url: 'http://localhost:3000', // http://localhost:3000/api-docs Abrir swagger
         description: 'Servidor Local',
       },
     ],

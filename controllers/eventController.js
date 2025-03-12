@@ -90,30 +90,29 @@ const Event = require("../models/events");
     }
   };
 
-// Não está encontrando ID
   const updateEvent = async (req, res, next) => {
     try {
       console.log('Requisição recebida para atualizar um evento');
-      console.log('ID do evento:', req.params.id);
+      console.log('ID do evento (da URL):', req.params.id);
       console.log('ID do organizador (usuário autenticado):', req.userId);
       console.log('Dados de atualização recebidos:', req.body);
   
-      const { id } = req.userId;
+      const id = req.params.id; // Usa o ID da URL, não de req.userId
       const updates = req.body;
   
       const event = await Event.findOneAndUpdate(
-        { _id: id, organizer: req.userId, isDeleted: false },
+        { _id: id, organizer: req.userId }, // Usa req.params.id para _id
         updates,
         { new: true }
       );
-      
+  
       if (!event) {
         console.error('Evento não encontrado ou usuário não tem permissão para editá-lo');
         const error = new Error('Evento não encontrado ou você não tem permissão para editá-lo');
         error.statusCode = 404;
         throw error;
       }
-      
+  
       console.log('Evento atualizado com sucesso:', event);
       res.status(200).json(event);
     } catch (error) {
@@ -121,5 +120,38 @@ const Event = require("../models/events");
       next(error);
     }
   };
+
+
+// Não está encontrando ID
+  // const updateEvent = async (req, res, next) => {
+  //   try {
+  //     console.log('Requisição recebida para atualizar um evento');
+  //     console.log('ID do evento:', req.params.id);
+  //     console.log('ID do organizador (usuário autenticado):', req.userId);
+  //     console.log('Dados de atualização recebidos:', req.body);
+  
+  //     const { id } = req.userId;
+  //     const updates = req.body;
+  
+  //     const event = await Event.findOneAndUpdate(
+  //       { _id: id, organizer: req.userId, isDeleted: false },
+  //       updates,
+  //       { new: true }
+  //     );
+      
+  //     if (!event) {
+  //       console.error('Evento não encontrado ou usuário não tem permissão para editá-lo');
+  //       const error = new Error('Evento não encontrado ou você não tem permissão para editá-lo');
+  //       error.statusCode = 404;
+  //       throw error;
+  //     }
+      
+  //     console.log('Evento atualizado com sucesso:', event);
+  //     res.status(200).json(event);
+  //   } catch (error) {
+  //     console.error('Erro ao atualizar evento:', error.message);
+  //     next(error);
+  //   }
+  // };
   
 module.exports = { createEvent, getEvents, updateEvent, deleteEvent };
