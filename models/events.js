@@ -1,14 +1,11 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    date: { type: Date, required: true },
-    location: { type: String, required: true },
-    online: { type: Boolean, default: false },
-    maxParticipants: { type: Number, required: true },
-    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } 
+    description: { type: String, required: true, ref: 'EventDescription' },
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
+    subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Subscription' }] ,
+    organizer: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' } 
 });
+
 
 module.exports = mongoose.model('Event', eventSchema);
