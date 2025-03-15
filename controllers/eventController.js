@@ -1,4 +1,6 @@
 const Event = require("../models/events");
+const EventDescription = require('../models/eventDescription');
+const Category = require('../models/category'); 
 
 const getEvents = async (req, res, next) => {
   try {
@@ -42,40 +44,25 @@ const getEvents = async (req, res, next) => {
   // };
   const createEvent = async (req, res, next) => {
     try {
-      console.log('Requisição recebida para criar um evento');
-      console.log('Corpo da requisição:', req.body);
-  
-      const { descriptionId, categories, organizer } = req.body;
+      const { description, categories, organizer, subscriptions } = req.body;
   
       // Verifica se a descrição do evento existe
-      const eventDescription = await EventDescription.findById(descriptionId);
+      const eventDescription = await EventDescription.findById(description);
       if (!eventDescription) {
-        const error = new Error('Descrição do evento não encontrada');
-        error.statusCode = 404;
-        throw error;
-      }
-  
-      // Verifica se as categorias existem
-      const categoryIds = await Category.find({ _id: { $in: categories } });
-      if (categoryIds.length !== categories.length) {
-        const error = new Error('Uma ou mais categorias não foram encontradas');
-        error.statusCode = 404;
-        throw error;
+        return res.status(404).json({ success: false, message: 'Descrição do evento não encontrada' });
       }
   
       // Cria o evento
       const event = new Event({
-        description: descriptionId,
-        categories: categories,
-        organizer: organizer || req.userId, // Organizador pode vir do corpo ou do usuário autenticado
+        description,
+        categories,
+        organizer,
+        subscriptions,
       });
   
       await event.save();
-      console.log('Evento salvo com sucesso:', event);
-  
       res.status(201).json(event);
     } catch (error) {
-      console.error('Erro ao criar evento:', error.message);
       next(error);
     }
   };
@@ -173,7 +160,6 @@ const getEvents = async (req, res, next) => {
   //   }
   // };
 
-
   const updateEvent = async (req, res, next) => {
     try {
       console.log('Requisição recebida para atualizar um evento');
@@ -206,7 +192,7 @@ const getEvents = async (req, res, next) => {
   
       // Atualiza o evento
       const event = await Event.findOneAndUpdate(
-        { _id: id, organizer: req.userId },
+        { _id: id, organizer: req.userId }, // Garante que apenas o organizador pode editar
         { description: descriptionId, categories: categories },
         { new: true }
       );

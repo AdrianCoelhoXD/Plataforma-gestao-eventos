@@ -1,4 +1,5 @@
 const EventDescription = require('../models/eventDescription');
+const mongoose = require('mongoose');
 
 const createEventDescription = async (req, res, next) => {
   try {
@@ -21,3 +22,4 @@ const createEventDescription = async (req, res, next) => {
 };
 
 module.exports = { createEventDescription };
+

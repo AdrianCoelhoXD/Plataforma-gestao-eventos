@@ -24,13 +24,23 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Conectando ao MongoDB
 connectDB();
 
+// Rotas 
+
 const authRoutes = require('./routes/authRoutes');
 app.use('/api', authRoutes); // Rota Registro 
 
 const eventRoutes = require('./routes/eventRoutes');
 app.use('/api/events', eventRoutes); //  Rota evento
 
-// Rotas 
+const categoryRoutes = require('./routes/categoryRoutes');
+app.use('/api/categories', categoryRoutes); // Rota categoria
+
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
+app.use('/api/subscriptions', subscriptionRoutes); // Rota inscrição
+ 
+const eventDescriptionRoutes = require('./routes/eventDescriptionRoutes');
+app.use('/api/event-descriptions', eventDescriptionRoutes);
+
 app.get('/',(req,res)=> {
     res.send('API GESTÃO DE EVENTOS');
 });
