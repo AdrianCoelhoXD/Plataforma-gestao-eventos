@@ -537,30 +537,66 @@
  *       400:
  *         description: Dados inválidos
  */
-
 /**
  * @openapi
  * /api/subscriptions:
  *   post:
  *     summary: Cria uma nova inscrição
+ *     description: Cria uma nova inscrição para um evento.
  *     tags: [Subscriptions]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Subscription'
+ *             type: object
+ *             properties:
+ *               user:
+ *                 type: string
+ *                 description: ID do usuário que está se inscrevendo.
+ *                 example: " 507617776cf86c0796439011"  
+ *               event:
+ *                 type: string
+ *                 description: ID do evento para o qual o usuário está se inscrevendo.
+ *                 example: " 507617776cf86c0796439011" 
+ *               subscriptionDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Data da inscrição.
+ *                 example: "2025-12-31T23:59:59Z"  
+ *               status:
+ *                 type: string
+ *                 description: Status da inscrição.
+ *                 example: "pending"
+ *        
  *     responses:
  *       201:
  *         description: Inscrição criada com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Subscription'
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: string
+ *                   description: ID do usuário que está se inscrevendo.
+ *                   example: " 507617776cf86c0796439011"  # Exemplo descritivo
+ *                 event:
+ *                   type: string
+ *                   description: ID do evento para o qual o usuário está se inscrevendo.
+ *                   example: " 507617776cf86c0796439011"  # Exemplo descritivo
+ *                 subscriptionDate:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Data da inscrição.
+ *                   example: "2025-12-31T23:59:59Z"  # Formato corrigido
+ *                 status:
+ *                   type: string
+ *                   description: Status da inscrição.
+ *                   example: "pending"
  *       400:
  *         description: Dados inválidos
  */
-
 /**
  * @openapi
  * /api/event-descriptions:
