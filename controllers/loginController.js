@@ -5,13 +5,11 @@ const register = async (req, res, next) => {
   const { name, email, password } = req.body;
 
   try {
-    // Verifica se o e-mail já está em uso
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ success: false, message: 'E-mail já está em uso' });
     }
 
-    // Cria um novo usuário
     const user = new User({ name, email, password });
     await user.save();
 
@@ -90,7 +88,7 @@ const deactivateAccount = async (req, res, next) => {
 };
 
 const deleteUserPermanently = async (req, res, next) => {
-  const userId = req.params.id; // ID do usuário a ser excluído
+  const userId = req.params.id; 
 
   try {
     console.log('Tentando excluir permanentemente o usuário com ID:', userId);
