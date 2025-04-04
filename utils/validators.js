@@ -1,13 +1,20 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 
-// Validações para criação/atualização de eventos DESATUALIZADO
-const eventValidationRules = () => [
-  body('description').notEmpty().withMessage('A descrição do evento é obrigatória').isMongoId().withMessage('O ID da descrição deve ser válido'),
-  body('categories').optional().isArray().withMessage('As categorias devem ser um array'),
-  body('organizer').notEmpty().withMessage('O organizador é obrigatório').isMongoId().withMessage('O ID do organizador deve ser válido'),
-  body('subscriptions').optional().isArray().withMessage('As inscrições devem ser um array'),
-];
+const eventValidator = {
+  createEvent: [
+    body('name').notEmpty().withMessage('O nome do evento é obrigatório'),
+    body('description').notEmpty().withMessage('A descrição é obrigatória'),
+    body('date').isISO8601().withMessage('Data inválida'),
+    body('location').notEmpty().withMessage('A localização é obrigatória'),
+    body('maxParticipants').isInt({ min: 1 }).withMessage('Número de participantes inválido'),
+    body('categories').optional().isArray(),
+    body('imageUrl').optional().isURL().withMessage('URL da imagem inválida')
+  ],
 
+  getOrganizerEvents: [
+    param('id').isMongoId().withMessage('ID do organizador inválido')
+  ]
+};
 const registerValidationRules = () => {
   return [
     // Nome é obrigatório e deve ter entre 2 e 100 caracteres
@@ -40,5 +47,6 @@ const loginValidationRules = () => {
   ];
 };
 
+module.exports = eventValidator;
 
-module.exports = { eventValidationRules, registerValidationRules, loginValidationRules };
+module.exports = { registerValidationRules, loginValidationRules };

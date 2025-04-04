@@ -1,17 +1,20 @@
+// routes/eventRoutes.js
 const express = require('express');
-const { createEvent, getEvents, updateEvent, deleteEvent } = require('../controllers/eventController');
-const authMiddleware = require('../middlewares/authMiddleware');
-const validate = require('../middlewares/validationMiddleware');
-const { eventValidationRules } = require('../utils/validators');
-
 const router = express.Router();
+const eventController = require('../controllers/eventController');
+const auth = require('../middlewares/authMiddleware');
+const eventValidator = require('../utils/validators');
 
-router.post('/', authMiddleware, eventValidationRules(), validate, createEvent);
+// Criar um novo evento
+router.post('/', auth, eventController.createEvent);
 
-router.get('/', getEvents);
+// Listar todos os eventos (para a página Home)
+router.get('/', eventController.getAllEvents);
 
-router.put('/:id', authMiddleware, validate, updateEvent);
-//eventValidationRules()
-router.delete('/:id', authMiddleware, deleteEvent); 
+// Listar eventos de um organizador específico
+router.get('/organizer/:id',  eventController.getOrganizerEvents);
+
+// Listar eventos do organizador autenticado
+router.get('/organizer/me', eventController.getMyEvents);
 
 module.exports = router;

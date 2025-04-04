@@ -1,21 +1,22 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
-const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-
-  if (!token) {
-    return res.status(401).json({ message: 'Acesso negado. Token não fornecido.' });
-  }
-
+const auth = async (req, res, next) => {
   try {
+    const token = req.header('Authorization').replace('Bearer ', '');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.userId; // Extrai o userId do payload
-    req.role = decoded.role; // Extrai o role do payload 
-    console.log('Usuário autenticado. userId:', req.userId); 
+    const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+    if (!user) {
+      throw new Error();
+    }
+
+    req.token = token;
+    req.user = user;
     next();
-  } catch (error) {
-    res.status(400).json({ message: 'Token inválido.' });
+  } catch (err) {
+    res.status(401).send({ error: 'Por favor, autentique-se.' });
   }
 };
 
-module.exports = authMiddleware;
+module.exports = auth;
