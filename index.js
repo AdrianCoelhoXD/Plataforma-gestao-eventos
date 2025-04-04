@@ -5,7 +5,7 @@ const cors = require('cors');
 const connectDB = require('./db/conexao');
 const globalErrorHandler = require('./middlewares/globalErrorMiddleware'); 
 const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
+// const swaggerJsdoc = require('swagger-jsdoc');
 const specs = require('./services/swagger');
 
 
@@ -16,6 +16,12 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(cors());
+
+// app.use(cors({
+//     origin: 'http://localhost:5173/', 
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'] 
+//   }));
+
 app.use(express.json());
 
 // Middleware do Swagger
@@ -32,14 +38,6 @@ app.use('/api', authRoutes); // Rota Registro
 const eventRoutes = require('./routes/eventRoutes');
 app.use('/api/events', eventRoutes); //  Rota evento
 
-const categoryRoutes = require('./routes/categoryRoutes');
-app.use('/api/categories', categoryRoutes); // Rota categoria
-
-const subscriptionRoutes = require('./routes/subscriptionRoutes');
-app.use('/api/subscriptions', subscriptionRoutes); // Rota inscrição
- 
-const eventDescriptionRoutes = require('./routes/eventDescriptionRoutes');
-app.use('/api/event-descriptions', eventDescriptionRoutes);
 
 app.get('/',(req,res)=> {
     res.send('API GESTÃO DE EVENTOS');
