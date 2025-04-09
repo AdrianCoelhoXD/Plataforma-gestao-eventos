@@ -1,3 +1,4 @@
+// models/user.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -5,24 +6,23 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'O nome é obrigatório'],
-    trim: true,
-    maxlength: [100, 'O nome não pode ter mais que 100 caracteres']
+    trim: true
   },
   email: {
     type: String,
     required: [true, 'O email é obrigatório'],
     unique: true,
-    lowercase: true,
     trim: true,
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Por favor, insira um email válido']
+    lowercase: true
   },
   password: {
     type: String,
     required: [true, 'A senha é obrigatória'],
-    minlength: [8, 'A senha deve ter pelo menos 8 caracteres']  },
+    minlength: [7, 'A senha deve ter no mínimo 7 caracteres']
+  },
   role: {
     type: String,
-    enum: ['user', 'organizer', 'admin'],
+    enum: ['user', 'admin'],
     default: 'user'
   },
   isActive: {
@@ -33,35 +33,28 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Event'
   }],
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  tokens: [{
+    token: {
+      type: String,
+      required: true
+    }
+  }]
 }, {
-  timestamps: true,
+  timestamps: true
 });
 
-// Middleware para hash da senha antes de salvar
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) 
-    return next();
-  
-  try {
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-  } catch (err) {
-    next(err);
+// Hash da senha antes de salvar o usuário
+userSchema.pre('save', async function (next) {
+  const user = this;
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 10);
   }
+  next();
 });
 
 // Método para comparar senhas
-userSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
-
-// Método para verificar se usuário é organizador
-userSchema.methods.isOrganizer = function() {
-  return this.role === 'organizer' || this.role === 'admin';
+userSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
 module.exports = mongoose.model('User', userSchema);

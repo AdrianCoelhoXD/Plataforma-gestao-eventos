@@ -1,3 +1,4 @@
+// controllers/authController.js
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
@@ -14,13 +15,18 @@ const register = async (req, res, next) => {
     await user.save();
 
     // Gera um token JWT
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '1h' 
+    const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '1h'
     });
+
+    // Adiciona o token ao array tokens do usuário
+    user.tokens = user.tokens.concat({ token });
+    await user.save();
 
     res.status(201).json({ success: true, token });
   } catch (error) {
-    next(error);
+    console.error('Erro ao registrar:', error.message);
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -28,45 +34,47 @@ const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-      console.log('Tentando fazer login com e-mail:', email);
+    console.log('Tentando fazer login com e-mail:', email);
 
-      const user = await User.findOne({ email });
-      if (!user) {
-          console.log('Usuário não encontrado:', email);
-          return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
-      }
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log('Usuário não encontrado:', email);
+      return res.status(400).json({ success: false, message: 'E-mail ou senha inválidos' });
+    }
 
-      if (!user.isActive) {
-          console.log('Conta desativada:', email);
-          return res.status(400).json({ success: false, message: 'Conta desativada' });
-      }
+    if (!user.isActive) {
+      console.log('Conta desativada:', email);
+      return res.status(400).json({ success: false, message: 'Conta desativada' });
+    }
 
-      const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-          console.log('Senha inválida para o usuário:', email);
-          return res.status(400).json({ success: false, message: 'Credenciais inválidas' });
-      }
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      console.log('Senha inválida para o usuário:', email);
+      return res.status(400).json({ success: false, message: 'E-mail ou senha inválidos' });
+    }
 
-      const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, {
-          expiresIn: '1h'
-      });
+    const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '1h'
+    });
 
-      console.log('Login realizado com sucesso para o usuário:', email);
-      res.status(200).json({ success: true, token });
+    // Adiciona o token ao array tokens do usuário
+    user.tokens = user.tokens.concat({ token });
+    await user.save();
+
+    console.log('Login realizado com sucesso para o usuário:', email);
+    res.status(200).json({ success: true, token });
   } catch (error) {
-      console.error('Erro ao fazer login:', error.message);
-      next(error);
+    console.error('Erro ao fazer login:', error.message);
+    res.status(400).json({ success: false, message: 'Erro ao fazer login' });
   }
 };
 
-//OBS: Não foi implementado função de reativação de conta, só pode ser feito a desativação da conta, para reativa-la precisa ser implementado uma verificação de email (Futuramente) Por questões de segurança. 
 const deactivateAccount = async (req, res, next) => {
-  const userId = req.userId; // Usa req.userId, que é definido pelo authMiddleware
+  const userId = req.user._id; // Usa req.user._id, que é definido pelo middleware auth
 
   try {
     console.log('Tentando desativar conta do usuário com ID:', userId);
 
-    // Verifica se o usuário existe
     const user = await User.findById(userId);
     if (!user) {
       console.log('Usuário não encontrado:', userId);
@@ -75,7 +83,6 @@ const deactivateAccount = async (req, res, next) => {
 
     console.log('Usuário encontrado:', user.email);
 
-    // Desativa a conta
     user.isActive = false;
     await user.save();
 
@@ -83,12 +90,12 @@ const deactivateAccount = async (req, res, next) => {
     res.status(200).json({ success: true, message: 'Conta desativada com sucesso' });
   } catch (error) {
     console.error('Erro ao desativar conta:', error.message);
-    next(error);
+    res.status(400).json({ success: false, message: 'Erro ao desativar conta' });
   }
 };
 
 const deleteUserPermanently = async (req, res, next) => {
-  const userId = req.params.id; 
+  const userId = req.params.id;
 
   try {
     console.log('Tentando excluir permanentemente o usuário com ID:', userId);
@@ -100,15 +107,14 @@ const deleteUserPermanently = async (req, res, next) => {
 
     console.log('Usuário encontrado:', user.email);
 
-    // Exclui o usuário permanentemente
     await User.findByIdAndDelete(userId);
 
     console.log('Usuário excluído permanentemente:', user.email);
     res.status(200).json({ success: true, message: 'Usuário excluído permanentemente com sucesso' });
   } catch (error) {
     console.error('Erro ao excluir usuário permanentemente:', error.message);
-    next(error);
+    res.status(400).json({ success: false, message: 'Erro ao excluir usuário permanentemente' });
   }
 };
 
-module.exports = { register, login, deactivateAccount ,deleteUserPermanently};
+module.exports = { register, login, deactivateAccount, deleteUserPermanently };
